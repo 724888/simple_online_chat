@@ -1,0 +1,19 @@
+{
+  "name": "simple_ws",
+  "version": "0.0.1",
+  "description": "A simple Online Chat WebAPP Based on Websocket",
+  "main": "index.js",
+  "repository": "https://github.com/Lurance/simple_online_chat.git",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/ws": "^5.1.0",
+    "nodemon": "^1.17.3"
+  }
+}
