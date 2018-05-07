@@ -1,105 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Online Chat</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <style>
-        .other {
-            text-align: left;
-            margin: 10px 0;
-            border-bottom: 1px solid #cfcfcf;
-            padding: 10px 0;
+const EVENT_LIST = {
+    NUM_PEOPLE: 'NUM_PEOPLE',
+    LOGIN: 'LOGIN',
+    LOGOUT: 'LOGOUT',
+    SPEAK: 'SPEAK',
+    ERROR: 'ERROR',
+    TOKEN: 'TOKEN'
+};
+
+const VIEW_LIST = [
+    'loginView',
+    'roomView'
+];
+
+const myUserdata = JSON.parse(localStorage.getItem('myUserdata')) || {uid: null, nick: null};
+
+let token = localStorage.getItem('token');
+
+// ----------------------------------- //
+
+function changeView(viewname) {
+    VIEW_LIST.forEach(v => {
+        console.log(v !== viewname)
+        if (v !== viewname) {
+            document.getElementById('loginView').style.display = 'none'
+        } else {
+            document.getElementById(v).style.display = 'block'
         }
+    })
+}
 
-        .me {
-            text-align: right;
-            margin: 10px 0;
-            color: #eea900;
-            border-bottom: 1px solid #cfcfcf;
-            padding: 10px 0;
-        }
-    </style>
-</head>
-<body style="height: 100%">
-    <header>
-        <div class="alert alert-primary text-center" role="alert">
-            当前有&nbsp;&nbsp;<span id="numPeople"></span>&nbsp;&nbsp;个人在线
-        </div>
-    </header>
-    <main class="container col-md-6" id="loginView" style="display: block">
-        <div style="padding: 30% 10%">
-            <input type="text" class="form-control" id="nick"> <br />
-            <button type="button" class="btn btn-outline-success btn-block" id="login">输入昵称，开始聊天</button>
-        </div>
-    </main>
-    <main class="container" id="roomView" style="display: none; height: 600px">
-        <div class="alert alert-primary text-center" role="alert">您已成功进入聊天室，您的昵称是：<span id="n"></span>，您的id是：<span id="i"></span></div>
-        <div class="row">
-            <section class="col-md-9" style="border: 1px solid #dddddd">
-                <section class="col-md-12" style="height: 480px; overflow: auto" id="chat">
-                </section>
-                <section class="col-md-12" style="height: 120px">
-                    <div class="row">
-                        <textarea style="height: 100px; width: 80%; " id="speakword"></textarea>
-                        <button type="button" class="btn btn-outline-success" style="width: 15%; margin-left: 5%" id="speak">发送</button>
-                    </div>
-                </section>
-            </section>
-            <aside class="col-md-3" style="border: 1px solid #dddddd; height: 600px;">
-                <p>用户列表：</p>
-                <ul class="list-group list-group-flush" id="userList" style="height: 540px; overflow: auto">
-
-                </ul>
-            </aside>
-        </div>
-    </main>
-</body>
-
-<script>
-    const EVENT_LIST = {
-        NUM_PEOPLE: 'NUM_PEOPLE',
-        LOGIN: 'LOGIN',
-        LOGOUT: 'LOGOUT',
-        SPEAK: 'SPEAK',
-        ERROR: 'ERROR'
-    };
-
-    const VIEW_LIST = [
-        'loginView',
-        'roomView'
-    ];
-
-    const myUserdata = {
-        uid: null,
-        nick: null
-    };
-
-    // ----------------------------------- //
-
-    function changeView(viewname) {
-        VIEW_LIST.forEach(v => {
-            console.log(v !== viewname)
-            if (v !== viewname) {
-                document.getElementById('loginView').style.display = 'none'
-            } else {
-                document.getElementById(v).style.display = 'block'
-            }
-        })
+(async () => {
+    if (!token) {
+        const res = await axios.get('token');
+        token = res.data.token;
     }
-
     // 本地测试用。如果生产环节部署需修改为生产服务器ip地址
-    const ws = new WebSocket('ws://127.0.0.1:3000/');
+    const ws = new WebSocket(`ws://127.0.0.1:3000/?token=${token}`);
 
     ws.addEventListener('open', () => {
         ws.send(JSON.stringify({
             EVENT: EVENT_LIST.NUM_PEOPLE
         }))
     });
-
 
     ws.addEventListener('message', (event) => {
         try {
@@ -111,6 +53,7 @@
                     break;
                 case EVENT_LIST.LOGIN:
                     document.getElementById('userList'). innerHTML = '';
+                    console.log(myUserdata)
                     if (myUserdata.nick !== data.value.nick) {
                         document.getElementById('numPeople').innerHTML = data.num;
                         data.userList.forEach(u => {
@@ -129,6 +72,14 @@
                     document.getElementById('userList'). innerHTML = '';
                     document.getElementById('numPeople').innerHTML = data.num;
                     data.userList.forEach(u => document.getElementById('userList'). innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`);
+                    break;
+                case EVENT_LIST.TOKEN:
+                    token = data.value;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('myUserdata', JSON.stringify({
+                        uid: data.uid,
+                        nick: data.nick
+                    }));
                     break;
                 case EVENT_LIST.SPEAK:
                     if (data.user.uid === myUserdata.uid) {
@@ -160,13 +111,13 @@
 
     // ------------------------------------- //
 
-    window.onbeforeunload = function () {
-        ws.send(JSON.stringify({
-            EVENT: EVENT_LIST.LOGOUT,
-            user: myUserdata
-        }));
-        ws.close();
-    };
+    // window.onbeforeunload = function () {
+    //     ws.send(JSON.stringify({
+    //         EVENT: EVENT_LIST.LOGOUT,
+    //         user: myUserdata
+    //     }));
+    //     ws.close();
+    // };
 
     document.getElementById('login').addEventListener('click', () => {
         if (ws.readyState === 1) {
@@ -193,5 +144,5 @@
             location.href = ''
         }
     })
-</script>
-</html>
+})();
+

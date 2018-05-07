@@ -8,7 +8,7 @@ import {wsEvent, wsshandle} from "./wssHandle";
 
 import {Server} from "ws";
 
-const createWss =  (server): Server => {
+const createWss = (server): Server => {
     const wss = new WebSocket.Server({server});
 
     wss.on('connection', wsshandle);
@@ -19,10 +19,10 @@ const createWss =  (server): Server => {
                 client.send(data);
             }
         })
-    })
+    });
 
     return wss
-}
+};
 
 export const createServer = async () => {
     const server = http.createServer();
@@ -32,5 +32,5 @@ export const createServer = async () => {
     createWss(server);
 
     return server
-}
+};
 

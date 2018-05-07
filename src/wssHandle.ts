@@ -4,10 +4,18 @@ import * as WebSocket from 'ws'
 
 import {EventEmitter} from "events";
 
+import * as querystring from 'querystring'
+
+import {sign, verify} from "jsonwebtoken";
+
+import * as url from "url";
+
 interface User {
     uid: number,
     nick: string
 }
+
+export const jwtSecret = 'vwiq2389cjkwopchwfcwev';
 
 export const wsEvent = new EventEmitter();
 
@@ -20,13 +28,24 @@ const EVENT_LIST = {
     LOGIN: 'LOGIN',
     LOGOUT: 'LOGOUT',
     SPEAK: 'SPEAK',
-    ERROR: 'ERROR'
+    ERROR: 'ERROR',
+    TOKEN: 'TOKEN'
 };
 
 export const wsshandle = (ws: WebSocket, req: http.IncomingMessage) => {
+    const token = querystring.parse(url.parse(req.url).query).token;
+    const user = verify(token as string, jwtSecret) as User;
+    console.log(user)
+    if (user.uid !== null && user.nick !== null && userList.findIndex(v => v.uid === user.uid && v.nick === user.nick) >= 0) {
+        ws.send(JSON.stringify({
+            EVENT: EVENT_LIST.LOGIN,
+            value: user,
+            userList: userList,
+            num: userList.length
+        }))
+    }
     ws.on('message', (rdata: WebSocket.Data) => {
         try {
-            console.log(req.headers.authorization)
             const data = JSON.parse(rdata as string);
             switch (data.EVENT) {
                 case EVENT_LIST.NUM_PEOPLE:
@@ -56,6 +75,12 @@ export const wsshandle = (ws: WebSocket, req: http.IncomingMessage) => {
                         nick: data.nick
                     };
                     userList.push(newUser);
+                    ws.send(JSON.stringify({
+                        EVENT: EVENT_LIST.TOKEN,
+                        value: sign(newUser, jwtSecret),
+                        uid: dUid,
+                        nick: data.nick
+                    }));
                     wsEvent.emit('broadcastData', JSON.stringify({
                         EVENT: EVENT_LIST.LOGIN,
                         value: newUser,
@@ -85,4 +110,4 @@ export const wsshandle = (ws: WebSocket, req: http.IncomingMessage) => {
             console.log(e)
         }
     });
-}
+};

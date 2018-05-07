@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Online Chat</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <style>
+        .other {
+            text-align: left;
+            margin: 10px 0;
+            border-bottom: 1px solid #cfcfcf;
+            padding: 10px 0;
+        }
+
+        .me {
+            text-align: right;
+            margin: 10px 0;
+            color: #eea900;
+            border-bottom: 1px solid #cfcfcf;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body style="height: 100%">
+    <header>
+        <div class="alert alert-primary text-center" role="alert">
+            当前有&nbsp;&nbsp;<span id="numPeople"></span>&nbsp;&nbsp;个人在线
+        </div>
+    </header>
+    <main class="container col-md-6" id="loginView" style="display: block">
+        <div style="padding: 30% 10%">
+            <input type="text" class="form-control" id="nick"> <br />
+            <button type="button" class="btn btn-outline-success btn-block" id="login">输入昵称，开始聊天</button>
+        </div>
+    </main>
+    <main class="container" id="roomView" style="display: none; height: 600px">
+        <div class="alert alert-primary text-center" role="alert">您已成功进入聊天室，您的昵称是：<span id="n"></span>，您的id是：<span id="i"></span></div>
+        <div class="row">
+            <section class="col-md-9" style="border: 1px solid #dddddd">
+                <section class="col-md-12" style="height: 480px; overflow: auto" id="chat">
+                </section>
+                <section class="col-md-12" style="height: 120px">
+                    <div class="row">
+                        <textarea style="height: 100px; width: 80%; " id="speakword"></textarea>
+                        <button type="button" class="btn btn-outline-success" style="width: 15%; margin-left: 5%" id="speak">发送</button>
+                    </div>
+                </section>
+            </section>
+            <aside class="col-md-3" style="border: 1px solid #dddddd; height: 600px;">
+                <p>用户列表：</p>
+                <ul class="list-group list-group-flush" id="userList" style="height: 540px; overflow: auto">
+
+                </ul>
+            </aside>
+        </div>
+    </main>
+</body>
+
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+
+<script src="index.js"></script>
+
+</html>
