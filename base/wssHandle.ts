@@ -19,13 +19,14 @@ const EVENT_LIST = {
     NUM_PEOPLE: 'NUM_PEOPLE',
     LOGIN: 'LOGIN',
     LOGOUT: 'LOGOUT',
-    SPEAK: 'SPEAK'
+    SPEAK: 'SPEAK',
+    ERROR: 'ERROR'
 };
 
 export const wsshandle = (ws: WebSocket, req: http.IncomingMessage) => {
-
     ws.on('message', (rdata: WebSocket.Data) => {
         try {
+            console.log(req.headers.authorization)
             const data = JSON.parse(rdata as string);
             switch (data.EVENT) {
                 case EVENT_LIST.NUM_PEOPLE:
@@ -35,6 +36,21 @@ export const wsshandle = (ws: WebSocket, req: http.IncomingMessage) => {
                     }));
                     break;
                 case EVENT_LIST.LOGIN:
+                    data.nick = data.nick.trim();
+                    if (userList.findIndex(v => v.nick === data.nick) >= 0) {
+                        ws.send(JSON.stringify({
+                            EVENT: EVENT_LIST.ERROR,
+                            value: '当前用户名已被使用'
+                        }));
+                        break;
+                    }
+                    if (data.nick.length >= 10) {
+                        ws.send(JSON.stringify({
+                            EVENT: EVENT_LIST.ERROR,
+                            value: '用户名长度应不超过10个字符'
+                        }));
+                        break;
+                    }
                     const newUser = {
                         uid: dUid,
                         nick: data.nick

@@ -2,7 +2,7 @@ import * as WebSocket from 'ws'
 
 import * as http from 'http'
 
-import {serverHandle} from "./serverhadle";
+import {serverHandle} from "./serverHandle";
 
 import {wsEvent, wsshandle} from "./wssHandle";
 

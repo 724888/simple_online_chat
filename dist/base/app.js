@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const WebSocket = require("ws");
 const http = require("http");
-const serverhadle_1 = require("./serverhadle");
+const serverHandle_1 = require("./serverHandle");
 const wssHandle_1 = require("./wssHandle");
 const createWss = (server) => {
     const wss = new WebSocket.Server({ server });
@@ -26,7 +26,7 @@ const createWss = (server) => {
 };
 exports.createServer = () => __awaiter(this, void 0, void 0, function* () {
     const server = http.createServer();
-    server.on('request', serverhadle_1.serverHandle);
+    server.on('request', serverHandle_1.serverHandle);
     createWss(server);
     return server;
 });

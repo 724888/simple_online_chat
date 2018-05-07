@@ -9,4 +9,4 @@ exports.serverHandle = (req, res) => {
         }
     }
 };
-//# sourceMappingURL=serverhadle.js.map
+//# sourceMappingURL=serverHandle.js.map
