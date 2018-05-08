@@ -20,7 +20,6 @@ let token = localStorage.getItem('token');
 
 function changeView(viewname) {
     VIEW_LIST.forEach(v => {
-        console.log(v !== viewname)
         if (v !== viewname) {
             document.getElementById('loginView').style.display = 'none'
         } else {
@@ -52,12 +51,11 @@ function changeView(viewname) {
                     document.getElementById('numPeople').innerHTML = data.value;
                     break;
                 case EVENT_LIST.LOGIN:
-                    document.getElementById('userList'). innerHTML = '';
-                    console.log(myUserdata)
+                    document.getElementById('userList').innerHTML = '';
                     if (myUserdata.nick !== data.value.nick) {
                         document.getElementById('numPeople').innerHTML = data.num;
                         data.userList.forEach(u => {
-                            document.getElementById('userList'). innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`
+                            document.getElementById('userList').innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`
                         })
                     } else {
                         myUserdata.uid = data.value.uid;
@@ -65,13 +63,13 @@ function changeView(viewname) {
                         document.getElementById('numPeople').innerHTML = data.num;
                         document.getElementById('n').innerHTML = data.value.nick;
                         document.getElementById('i').innerHTML = data.value.uid;
-                        data.userList.forEach(u => document.getElementById('userList'). innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`)
+                        data.userList.forEach(u => document.getElementById('userList').innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`)
                     }
                     break;
                 case EVENT_LIST.LOGOUT:
-                    document.getElementById('userList'). innerHTML = '';
+                    document.getElementById('userList').innerHTML = '';
                     document.getElementById('numPeople').innerHTML = data.num;
-                    data.userList.forEach(u => document.getElementById('userList'). innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`);
+                    data.userList.forEach(u => document.getElementById('userList').innerHTML += `<li class="list-group-item">id：${u.uid} 昵称：${u.nick}</li>`);
                     break;
                 case EVENT_LIST.TOKEN:
                     token = data.value;
@@ -88,7 +86,7 @@ function changeView(viewname) {
                         ${data.word}：我
                         </div>
                         `
-                    }  else {
+                    } else {
                         document.getElementById('chat').innerHTML += `
                         <div class="col-md-12 other">
                         ${data.user.nick}: ${data.word}
@@ -105,19 +103,12 @@ function changeView(viewname) {
         }
     });
 
+    window.onbeforeunload = () => ws.close();
+
     ws.addEventListener('close', () => {
-        if (myUserdata.uid !== null && myUserdata.nick !== null) alert('您已断开与聊天室的连接')
+        location.href = '';
     });
 
-    // ------------------------------------- //
-
-    // window.onbeforeunload = function () {
-    //     ws.send(JSON.stringify({
-    //         EVENT: EVENT_LIST.LOGOUT,
-    //         user: myUserdata
-    //     }));
-    //     ws.close();
-    // };
 
     document.getElementById('login').addEventListener('click', () => {
         if (ws.readyState === 1) {
@@ -129,6 +120,15 @@ function changeView(viewname) {
         } else {
             alert('连接尚未建立');
         }
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+        ws.send(JSON.stringify({
+            EVENT: EVENT_LIST.LOGOUT,
+            user: myUserdata
+        }));
+        localStorage.clear();
+        location.href = ''
     });
 
     document.getElementById('speak').addEventListener('click', () => {

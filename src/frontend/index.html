@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Online Chat</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
     <style>
         .other {
             text-align: left;
@@ -37,7 +37,7 @@
         </div>
     </main>
     <main class="container" id="roomView" style="display: none; height: 600px">
-        <div class="alert alert-primary text-center" role="alert">您已成功进入聊天室，您的昵称是：<span id="n"></span>，您的id是：<span id="i"></span></div>
+        <div class="alert alert-primary text-center" role="alert">您已成功进入聊天室，您的昵称是：<span id="n"></span>，您的id是：<span id="i"></span><span style="float: right; cursor: pointer" id="logout">退出</span></div>
         <div class="row">
             <section class="col-md-9" style="border: 1px solid #dddddd">
                 <section class="col-md-12" style="height: 480px; overflow: auto" id="chat">
@@ -59,6 +59,7 @@
     </main>
 </body>
 
+<script src="https://cdn.bootcss.com/rxjs/5.5.10/Rx.min.js"></script>
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
 
 <script src="index.js"></script>

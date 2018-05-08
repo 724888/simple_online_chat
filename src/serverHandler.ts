@@ -2,9 +2,9 @@ import {simpleRender} from "./render";
 
 import {sign} from "jsonwebtoken";
 
-import {jwtSecret} from "./wssHandle";
+import {jwtSecret} from "./wssHandler";
 
-export const serverHandle = (req, res) => {
+export const serverHandler = (req, res) => {
     switch (req.url) {
         case '/': {
             simpleRender(res, __dirname + '/frontend/index.html', 'html');
@@ -12,6 +12,7 @@ export const serverHandle = (req, res) => {
         }
 
         case '/token': {
+            res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
             res.end(JSON.stringify({
                 token: sign({uid: null, nick: null}, jwtSecret)
             }));

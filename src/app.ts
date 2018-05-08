@@ -2,16 +2,16 @@ import * as WebSocket from 'ws'
 
 import * as http from 'http'
 
-import {serverHandle} from "./serverHandle";
+import {serverHandler} from "./serverHandler";
 
-import {wsEvent, wsshandle} from "./wssHandle";
+import {wsEvent, wssHandler} from "./wssHandler";
 
 import {Server} from "ws";
 
 const createWss = (server): Server => {
     const wss = new WebSocket.Server({server});
 
-    wss.on('connection', wsshandle);
+    wss.on('connection', wssHandler);
 
     wsEvent.on('broadcastData', (data) => {
         wss.clients.forEach(client => {
@@ -27,7 +27,7 @@ const createWss = (server): Server => {
 export const createServer = async () => {
     const server = http.createServer();
 
-    server.on('request', serverHandle);
+    server.on('request', serverHandler);
 
     createWss(server);
 
